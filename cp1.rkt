@@ -88,19 +88,30 @@
 
 ;(pow 7 9)
 
+(define (double n) (* n 2))
+
+(define (halve n) (/ n 2))
+
+(define (even? n) (= (remainder n 2) 0))
+
 ; рекурсивное умножение с помощью сложения
-(define (fast-mult-iter base n)
-  (define (double n) (* n 2))
-
-  (define (halve n) (/ n 2))
-
-  (define (even? n) (= (remainder n 2) 0))
-  
+(define (fast-mult-rec m n)
   (cond ((= n 0) 0) ;частный случай
-        ((= n 1) base)
-        ((even? n) (double (fast-mult-iter base (halve n))))
-        (else (+ base (fast-mult-iter base (- n 1))))
+        ((= n 1) m)
+        ((even? n) (double (fast-mult-rec m (halve n))))
+        (else (+ m (fast-mult-rec m (- n 1))))
    )
 )
 
-;(fast-mult-iter 11 11)
+(fast-mult-rec 11 11)
+
+
+; итеративное умножение с помощью сложения (m * n)
+(define (fast-mult-iter m n out)
+  (cond ((= n 0) out) ;в случае нечетного второго множителя мы оказываемся здесь дважды - на первой и на последней итерации. в случае четного только на последней
+        ((even? n) (fast-mult-iter (double m) (halve n) out))
+        (else (fast-mult-iter m (- n 1) (+ m out)))
+   )
+)
+
+(fast-mult-iter 11 11 0)
