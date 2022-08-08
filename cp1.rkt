@@ -153,9 +153,9 @@
 	(else false)))
 
 ;(fast-prime? 29 5)
-(smallest-divisor 199)
-(smallest-divisor 1999)
-(smallest-divisor 19999)
+;(smallest-divisor 199)
+;(smallest-divisor 1999)
+;(smallest-divisor 19999)
 
 (define (runtime) (current-milliseconds))
 
@@ -172,13 +172,13 @@
   (display " *** ")
   (display elapsed-time))
 
-(timed-prime-test 1999)
-(timed-prime-test 10000000000037)
-(timed-prime-test 10000000000051)
-(timed-prime-test 10000000000099)
-(timed-prime-test 100000000000031)
-(timed-prime-test 100000000000067)
-(timed-prime-test 100000000000097)
+;(timed-prime-test 1999)
+;(timed-prime-test 10000000000037)
+;(timed-prime-test 10000000000051)
+;(timed-prime-test 10000000000099)
+;(timed-prime-test 100000000000031)
+;(timed-prime-test 100000000000067)
+;(timed-prime-test 100000000000097)
 
 (define (search-for-primes n start-time founded-numbers-counter)
     (cond ((= founded-numbers-counter 0) 
@@ -193,5 +193,75 @@
 
 ;(search-for-primes 1000000000000  (runtime) 3)
 ;(search-for-primes 10000000000000 (runtime) 3)
-;(search-for-primes 100000000000000 (runtime) 3)
+;(search-for-primes 10000000000000 (runtime) 3)
 
+; возвращает сумму чисел от current до threshold включительно. 
+; term - процедура преобразования текущего аргумента;
+; next - возвращает следующий аргумент. 
+(define (sum term current next threshold)
+  (if (> current threshold)
+    0
+    (+ (term current)
+       (sum term (next current) next threshold))))
+
+(define (cube a)
+  (* a a a))
+
+(define (inc a)
+  (+ a 1))
+
+; сумма кубов
+(define (sum-cubes current threshold)
+  (sum cube current inc threshold))
+
+; сумма от 1 до 10
+(define (sum-integers current threshold)
+  (define (identity x) x)
+  (sum identity current inc threshold))
+
+; интегрирование методом Симпсона.
+; чтобы не запутаться в переменных: 
+; a - левая граница значений функции
+; b - правая граница значений функции
+; n - количество итераций
+; h = (b - a) / n
+; yk = f(a + k*h)
+; func = term
+(define (simpson-integral a b func n)
+  (simpson-integral-impl a b func n (/ (- b a) n)))
+
+(define (simpson-integral-impl a b func n h)
+  (define (term k) ; tem = f(c) * (h /3)
+   (* (/ h 3) (func (+ a (* k h)))))
+
+  (define (yk k)
+    (cond ((= k 0) (term k))
+	((= k n) (term k))
+	((even? k) (* 2 (term k)))
+	(else (* 4 (term k)))))
+
+  (sum yk 0 inc n))
+
+;(sum-integers 1 10)
+;(sum-cubes 1 10)
+;(simpson-integral 0 1 cube 10)
+
+; итеративное суммирование
+(define (sum-iter term a next b)
+  (define (iter a result)
+    (if (= a b)
+      (+ result (term a))
+      (iter (term a) (+ result a))))
+  (iter a 0))
+
+; сумма кубов (итеративно)
+(define (sum-cubes-iter current threshold)
+  (sum cube current inc threshold))
+
+; сумма от 1 до 10 (итеративно)
+(define (sum-integers-iter current threshold)
+  (define (identity x) x)
+  (sum identity current inc threshold))
+
+(sum-integers-iter 1 10)
+(sum-cubes-iter 1 10)
