@@ -263,5 +263,58 @@
   (define (identity x) x)
   (sum identity current inc threshold))
 
-(sum-integers-iter 1 10)
-(sum-cubes-iter 1 10)
+;(sum-integers-iter 1 10)
+;(sum-cubes-iter 1 10)
+
+; лямбды
+(define (pi-sum a b)
+  (sum (lambda (x) (/ 1.0 (* x (+ x 2))))
+       a
+       (lambda (x) (+ x 4))
+       b))
+
+;((lambda (x y z) (+ x y (square z))) 1 2 3)
+
+;(define (f x y)
+;  ((lambda (a b)
+;     (+ (* x (square a))
+;	(* y b)
+;	(* a b)))
+;  (+ 1 (* x y))
+;   (- 1 y)))
+
+; локальные переменные
+; а теперь (f x y) с помощью let
+;(define (f x y)
+;  (let ((a (+ 1 (* x y)))
+;	(b (- 1 y)))
+;    (+ (* x (square a))
+;       (* y b)
+;       (* a b))))
+
+(define (some-expr x)
+  (+ (let ((x 3)) ; объявляем 3 
+     (+ x (* x 10))) ; вычисляем 3 + 3 * 10
+     x)) ; прибавляем другой x к 33
+
+(some-expr 5)
+
+(define (sum-of-squares-ll x y)
+  (let ((square (lambda (n) (* n n))))
+    (+ (square x) (square y))))
+
+(sum-of-squares-ll 8 7)
+
+; процедура как результат выполнения другой процедуры (возвращаем ламбду)
+
+; функция получающая в качестве аргумента функцию и применяющая е едважды
+(define (double-f f)
+  (lambda (x) (f (f x))))
+
+((double-f inc) 1)
+
+; композиция функций f(g(x))
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+((compose square inc) 6)	
