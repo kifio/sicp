@@ -1,5 +1,8 @@
 #lang racket
 
+(provide square)
+(provide sqrt)
+
 (define (square x) (* x x))
 
 (define (sum-of-squares x y)
@@ -297,24 +300,23 @@
      (+ x (* x 10))) ; вычисляем 3 + 3 * 10
      x)) ; прибавляем другой x к 33
 
-(some-expr 5)
+;(some-expr 5)
 
 (define (sum-of-squares-ll x y)
   (let ((square (lambda (n) (* n n))))
     (+ (square x) (square y))))
 
-(sum-of-squares-ll 8 7)
+;(sum-of-squares-ll 8 7)
 
 ; процедура как результат выполнения другой процедуры (возвращаем ламбду)
-
 ; функция получающая в качестве аргумента функцию и применяющая е едважды
 (define (double-f f)
   (lambda (x) (f (f x))))
 
-((double-f inc) 1)
+;((double-f inc) 1)
 
 ; композиция функций f(g(x))
 (define (compose f g)
   (lambda (x) (f (g x))))
 
-((compose square inc) 6)	
+;((compose square inc) 6)	
