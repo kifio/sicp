@@ -5,8 +5,8 @@
 ; Рациональные числа
 (define (gcd a b)
   (if (= b 0)
-      a
-      (gcd b (remainder a b))))
+    a
+    (gcd b (remainder a b))))
 
 (define (sign n)
   (if (> n 0)
@@ -15,13 +15,13 @@
 
 (define (make-rat n d)
   (let (
-	(g (gcd (abs n) (abs d)))
-	(signed_n (/ n (sign d)))
-	(signed_d (/ d (sign d)))
-	)
+         (g (gcd (abs n) (abs d)))
+         (signed_n (/ n (sign d)))
+         (signed_d (/ d (sign d)))
+         )
     (cons (/ signed_n g) (/ signed_d g))))
 
-(define (numer x) 
+(define (numer x)
   (car x))
 
 (define (denom x)
@@ -29,25 +29,25 @@
 
 (define (add-rat x y)
   (make-rat (+ (* (numer x) (denom y))
-	       (* (numer y) (denom x)))
-	    (* (denom x) (denom y))))
+              (* (numer y) (denom x)))
+    (* (denom x) (denom y))))
 
 (define (sub-rat x y)
   (make-rat (- (* (numer x) (denom y))
-	       (* (numer y) (denom x)))
-	    (* (denom x) (denom y))))
+              (* (numer y) (denom x)))
+    (* (denom x) (denom y))))
 
 (define (mul-rat x y)
   (make-rat (* (numer x) (numer y))
-	    (* (denom y) (denom x))))
+    (* (denom y) (denom x))))
 
 (define (div-rat x y)
   (make-rat (* (numer x) (denom y))
-	    (* (denom x) (numer y))))
+    (* (denom x) (numer y))))
 
 (define (equal-rat x y)
   (= (* (numer x) (denom y))
-     (* (numer y) (denom x))))
+    (* (numer y) (denom x))))
 
 (define (print-rat x)
   (newline)
@@ -103,10 +103,10 @@
 ; Нахождение середины отрезка
 (define (midpoint-segment segment)
   (let (
-	(start (start-segment segment))
-	(end (end-segment segment))
-	)
-  (make-point (/ (+ (x-point start) (x-point end)) 2) (/ (+ (y-point start) (y-point end)) 2))))
+         (start (start-segment segment))
+         (end (end-segment segment))
+         )
+    (make-point (/ (+ (x-point start) (x-point end)) 2) (/ (+ (y-point start) (y-point end)) 2))))
 
 (print-point (midpoint-segment (make-segment -7 3 2 4)))
 
@@ -152,4 +152,31 @@
 (newline)
 (perimeter (make-rect 0 0 10 10))
 (area (make-rect 0 0 10 10))
-ы
+
+; Интервальная арифметика
+(define (make-interval lower upper) (cons lower upper))
+
+(define (lower-bound interval) (car interval))
+
+(define (upper-bound interval) (cdr interval))
+
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+    (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let (
+         (p1 (* (lower-bound x) (lower-bound y)))
+         (p2 (* (lower-bound x) (upper-bound y)))
+         (p3 (* (upper-bound x) (lower-bound y)))
+         (p4 (* (upper-bound x) (upper-bound y)))
+         )
+    (make-interval (min p1 p2 p3 p4) (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (mul-interval x (make-interval (/ 1.0 (upper-bound y)) (/ 1.0 (lower-bound y)))))
+
+(add-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+(mul-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+(div-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+
