@@ -56,22 +56,22 @@
   (display (denom x)))
 
 (define one-half (make-rat 1 2))
-(print-rat one-half)
+;(print-rat one-half)
 
 (define one-third (make-rat 1 3))
-(print-rat one-third)
+;(print-rat one-third)
 
-(print-rat (add-rat one-half one-third))
-(print-rat (mul-rat one-half one-third))
-(print-rat (add-rat one-third one-third))
+;(print-rat (add-rat one-half one-third))
+;(print-rat (mul-rat one-half one-third))
+;(print-rat (add-rat one-third one-third))
 
 ; Числитель - целое число, знаменатель - натуральное число.
 ; При создании рационального числа это надо учитывать и знаменатель всегда должен быть натуральным.
 
-(print-rat (make-rat -1 3)) ; -1/3
-(print-rat (make-rat 1 -3)) ; -1/3
-(print-rat (make-rat -1 -3)) ; 1/3
-(print-rat (make-rat 1 3)) ; 1/3
+;(print-rat (make-rat -1 3)) ; -1/3
+;(print-rat (make-rat 1 -3)) ; -1/3
+;(print-rat (make-rat -1 -3)) ; 1/3
+;(print-rat (make-rat 1 3)) ; 1/3
 
 ; Представление отрезков прямой на плоскости
 (define (make-point x y)
@@ -108,7 +108,7 @@
          )
     (make-point (/ (+ (x-point start) (x-point end)) 2) (/ (+ (y-point start) (y-point end)) 2))))
 
-(print-point (midpoint-segment (make-segment -7 3 2 4)))
+;(print-point (midpoint-segment (make-segment -7 3 2 4)))
 
 ; Пример двух вариантов объявления прямоугольника (конструктор + селекторы)
 ; при которых неизменными остаются высокоуровневые функции периметра и площади
@@ -149,9 +149,9 @@
 (define (area rect)
   (* (rect-width rect) (rect-height rect)))
 
-(newline)
-(perimeter (make-rect 0 0 10 10))
-(area (make-rect 0 0 10 10))
+;(newline)
+;(perimeter (make-rect 0 0 10 10))
+;(area (make-rect 0 0 10 10))
 
 ; Интервальная арифметика
 (define (make-interval lower upper) (cons lower upper))
@@ -176,7 +176,88 @@
 (define (div-interval x y)
   (mul-interval x (make-interval (/ 1.0 (upper-bound y)) (/ 1.0 (lower-bound y)))))
 
-(add-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
-(mul-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
-(div-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (lower-bound y))
+    (- (upper-bound x) (upper-bound y))))
 
+;(add-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+;(mul-interval (make-interval 3.0 5.0) (make-interval 4.0 5.0))
+;(div-interval (make-interval 3.0 5.0) (make-interval -4.0 5.0))
+;(sub-interval (make-interval 4.0 5.0) (make-interval 3.0 5.0))
+
+; Списки
+(define (list-ref items n)
+  (if (= n 0)
+      (car items)
+      (list-ref (cdr items) (- n 1))))
+
+(define squares (list 1 4 9 16 25))
+;(list-ref squares 3)
+
+(define (length items)
+  (if (null? items)
+    0
+    (+ 1 (length (cdr items)))))
+
+(define (append list1 list2)
+  (if (null? list1)
+    list2
+    (cons (car list1) (append (cdr list1) list2))))
+
+(define (last-pair items)
+  (if (null? (cdr items))
+    (car items)
+    (last-pair (cdr items))))
+
+(define (reverse items)
+  (define (reverse-iter items out)
+    (if (null? (cdr items))
+      (cons (car items) out)
+      (reverse-iter (cdr items) (cons (car items) out))))
+  (reverse-iter items (list)))
+
+(define (same-parity x . items)
+  (define (is-same-parity x y)
+    (and (= (remainder y 2) (remainder x 2))))
+
+  (define (same-parity-iter x items out)
+    (if (null? (cdr items))
+      (if (is-same-parity x (car items))
+	(cons (car items) out)
+	out)
+      (same-parity-iter x (cdr items) (if (is-same-parity x (car items))
+					(cons (car items) out)
+					out))))
+  (same-parity-iter x items (list)))
+
+
+
+;(last-pair (list 23 72 149 34))
+;(reverse (list 23 72 149 34))
+;(same-parity 2 3 4 5 6 7 8 9 10 11)
+
+; map()
+
+(define (map proc items)
+  (if (null? items)
+    null
+    (cons (proc (car items)) (map proc (cdr items)))))
+
+;(map abs (list -10 2.5 -11.6 17))
+
+;(define (square-list items)
+;  (if (null? items)
+;    null
+;    (cons (* (car items) (car items)) (square-list (cdr items)))))
+
+(define (square-list items)
+  (map (lambda (x) (* x x))  items))
+
+(square-list (list 2 3 4 5 6 7 8 9 10 11))
+
+(define (for-each proc items)
+  (proc (car items))
+  (cond ((not (null? (cdr items)))
+    (for-each proc (cdr items)))))
+
+(for-each (lambda (x) (newline) (display x)) (list 2 3 4 5 6 7 8 9 10 11))
