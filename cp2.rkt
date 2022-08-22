@@ -253,11 +253,89 @@
 (define (square-list items)
   (map (lambda (x) (* x x))  items))
 
-(square-list (list 2 3 4 5 6 7 8 9 10 11))
+;(square-list (list 2 3 4 5 6 7 8 9 10 11))
 
 (define (for-each proc items)
   (proc (car items))
   (cond ((not (null? (cdr items)))
     (for-each proc (cdr items)))))
 
-(for-each (lambda (x) (newline) (display x)) (list 2 3 4 5 6 7 8 9 10 11))
+;(for-each (lambda (x) (newline) (display x)) (list 2 3 4 5 6 7 8 9 10 11))
+
+;(define (extract-seven) (list 1 3 (list 5 7) 9))
+;(car (cdr (car (cdr (cdr (extract-seven))))))
+
+;(define (extract-seven) (list (list 7)))
+;(car (car (extract-seven)))
+
+;(define (extract-seven) (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+;(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (extract-seven)))))))))))))
+
+;(define x (list 1 2 3))
+;(define y (list 4 5 6))
+
+;(append x y)
+;(cons x y)
+;(list x y)
+
+; Деревья
+(define tree (cons (list 1 2) (list 3 4)))
+
+(define (count-leaves x)
+  (cond ((null? x) 0)
+	((not (pair? x)) 1)
+	(else (+ (count-leaves (car x))
+		 (count-leaves (cdr x))))))
+
+
+(define (fringe l)
+  (define (fringe-iter l out)
+    (display l)
+    (newline)
+    (cond ((null? l) out)
+	((not (pair? l))
+         (display l)
+         (display " не является списком")
+         (newline)
+         (append (list l) out))
+	(else
+         (display l)
+         (display " является списком")
+         (newline)
+         (append (fringe-iter (car l) out)
+		 (fringe-iter (cdr l) out)))))
+  
+  (fringe-iter l (list)))
+
+(define x (list (list 1 2) (list 3 4)))
+
+;(fringe (list x x))
+;(fringe 101)
+
+(define (scale-tree tree factor)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (scale-tree sub-tree factor)
+             (* sub-tree factor)))
+       tree))
+
+(define (square-tree tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (square-tree sub-tree)
+             (* sub-tree sub-tree)))
+       tree))
+
+;(square-tree (list 1 (list 2 (list 3 4) 5) (list 6 7)))
+;(scale-tree (list 1 (list 2 (list 3 4) 5) (list 6 7)) 2)
+
+(define (tree-map proc tree)
+  (map (lambda (sub-tree)
+         (if (pair? sub-tree)
+             (tree-map proc sub-tree)
+             (proc sub-tree)))
+       tree))
+
+(define (map-square-tree tree) (tree-map (lambda (x) (* x x)) tree))
+;(map-square-tree (list 1 (list 2 (list 3 4) 5) (list 6 7)))
+
