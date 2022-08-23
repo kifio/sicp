@@ -290,24 +290,24 @@
 
 (define (fringe l)
   (define (fringe-iter l out)
-    (display l)
-    (newline)
+    ;(display l)
+    ;(newline)
     (cond ((null? l) out)
 	((not (pair? l))
-         (display l)
-         (display " не является списком")
-         (newline)
+         ;(display l)
+         ;(display " не является списком")
+         ;(newline)
          (append (list l) out))
 	(else
-         (display l)
-         (display " является списком")
-         (newline)
+         ;(display l)
+         ;(display " является списком")
+         ;(newline)
          (append (fringe-iter (car l) out)
 		 (fringe-iter (cdr l) out)))))
   
   (fringe-iter l (list)))
 
-(define x (list (list 1 2) (list 3 4)))
+(define x (list 1 (list 2 (list 3 4)) 5))
 
 ;(fringe (list x x))
 ;(fringe 101)
@@ -339,3 +339,78 @@
 (define (map-square-tree tree) (tree-map (lambda (x) (* x x)) tree))
 ;(map-square-tree (list 1 (list 2 (list 3 4) 5) (list 6 7)))
 
+; Операции над последовательностями
+(define (filter predicate sequence)
+  (cond ((null? sequence) null)
+        ((predicate (car sequence)) (cons (car sequence) (filter predicate (cdr sequence))))
+        (else (filter predicate (cdr sequence)))))
+
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence) (accumulate op initial (cdr sequence)))))
+
+;(filter odd? (list 1 2 3 4 5))
+;(accumulate + 0 (list 1 2 3 4 5))
+
+(define (enumerate-interval low high)
+  (if (> low high)
+      null
+      (cons low (enumerate-interval (+ low 1) high))))
+
+(define (enumerate-tree tree) (fringe tree))
+
+(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib (- n 1)) (fib (- n 2))))
+  ))
+
+(define (sum-odd-squares tree)
+  (accumulate + 0 (map square (filter odd? (enumerate-tree tree)))))
+
+(define (even-fibs n)
+  (accumulate cons null (filter even? (map fib (enumerate-interval 0 n)))))
+
+;(sum-odd-squares (list 1 (list 2 (list 3 4) 5) (list 6 7)))
+;(even-fibs 10)
+
+(define (accumulate-map p sequence)
+  (accumulate (lambda (x y) (cons (p (car sequence)) (accumulate-map p (cdr sequence)))) null sequence))
+
+(define (accumulate-append seq1 seq2)
+  (accumulate cons seq1 seq2)
+  ;(cond
+  ;  ((pair? seq1) (cons (car seq1) (accumulate-append (cdr seq1) seq2)))
+  ;  ((pair? seq2) (cons (car seq2) (accumulate-append seq1 (cdr seq2))))
+  ;  (else null))
+  )
+
+(define (accumulate-length sequence)
+  (accumulate + 0 sequence))
+
+;(accumulate-map (lambda (x) (* x x)) (list 2 3 4 5 6 7 8 9 10 11))
+;(accumulate-append (list 2 3 4 5 6) (list 7 8 9 10 11))
+;(accumulate-length (list 2 3 4 5 6 7 8 9 10 11))
+
+(define (get-heads sequences)
+  (if (null? sequences) null
+  (cons (car (car sequences)) (get-heads (cdr sequences))))
+)
+
+(define (get-tails sequences)
+  (if (null? sequences) null
+  (cons (cdr (car sequences)) (get-tails (cdr sequences))))
+)
+
+;(get-heads (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
+;(get-tails (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
+
+; Аккумулирует соответствующие элементы из последовательностей входящей последовательности (типа операторов compact/flat)
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      null
+      (cons (accumulate op init (get-heads seqs))
+            (accumulate-n op init (get-tails seqs)))))
+
+;(accumulate-n + 0 (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12) (list 13 14 15)))
