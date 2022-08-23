@@ -407,6 +407,7 @@
 ;(get-tails (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12)))
 
 ; Аккумулирует соответствующие элементы из последовательностей входящей последовательности (типа операторов compact/flat)
+; сижу с лицом лица осознавая, что get-heads - это (map car seq), а get-tails - это (map cdr seq). 
 (define (accumulate-n op init seqs)
   (if (null? (car seqs))
       null
