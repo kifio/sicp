@@ -415,3 +415,33 @@
             (accumulate-n op init (get-tails seqs)))))
 
 ;(accumulate-n + 0 (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12) (list 13 14 15)))
+
+
+; ALARMA. В книге в dot-product используется преобразование (map * v w), но map принимает только 2 аргумента, а не 3.
+; Чтобы это порешить
+(define (acc-with-transform proc seq1 seq2)
+  (if (null? seq1)
+      null
+      (cons (proc (car seq1) (car seq2)) (acc-with-transform proc (cdr seq1) (cdr seq2)))
+  ))
+
+; Скалярное произведение двух векторов.
+(define (dot-product v w)
+  (accumulate + 0 (acc-with-transform * v w)))
+
+; Умножение матрицы на вектор
+(define(matrix-*-vector m v)
+  (map (lambda (row) (dot-product row v)) m))
+;(matrix-*-vector (list (list 1 2 3) (list 4 5 6) (list 7 8 9)) (list 10 11 12))
+
+; Транспонирование
+(define (transpose mat)
+  (accumulate-n cons null mat))
+;(transpose (list (list 1 2 3) (list 4 5 6) (list 7 8 9)))
+
+; Умножение матрицы на матрицу
+(define(matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (row) (matrix-*-vector cols row)) m)))
+
+(matrix-*-matrix (list (list 1 2 3) (list 4 5 6) (list 7 8 9)) (list (list 1 2 3) (list 4 5 6) (list 7 8 9)))
