@@ -1,5 +1,7 @@
 #lang racket
 
+(provide accumulate)
+(provide accumulate-n)
 (require "cp1.rkt")
 
 ; Рациональные числа
@@ -409,6 +411,8 @@
 ; Аккумулирует соответствующие элементы из последовательностей входящей последовательности (типа операторов compact/flat)
 ; сижу с лицом лица осознавая, что get-heads - это (map car seq), а get-tails - это (map cdr seq). 
 (define (accumulate-n op init seqs)
+  (display seqs)
+  (newline)
   (if (null? (car seqs))
       null
       (cons (accumulate op init (get-heads seqs))
