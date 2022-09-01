@@ -129,22 +129,3 @@
 (cross window)
 (diamond window)|#
 ;wave рисовать не буду, мне хватило одного перепечатывания координат картины "Кот в сапогах" с миллиметровки в C++ Builder 6. 
-
-#|(define (beside painter1 painter2)
-  (let ((split-point (make-vect 0.5 0.0)))
-    (let ((paint-left
-           (transform-painter painter1
-                              (make-vect 0.0 0.0)
-                              split-point
-                              (make-vect 0.0 1.0)))
-          (paint-right
-           (transform-painter painter2
-                              split-point
-                              (make-vect 1.0 0.0)
-                              (make-vect 0.5 1.0))))
-      (lambda (frame)
-        (paint-left frame)
-        (paint-right frame)))))
-
-(define wave2 (beside wave (flip-vert wave)))
-(define wave4 (below wave2 wave2))|#

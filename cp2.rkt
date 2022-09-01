@@ -2,6 +2,7 @@
 
 (provide accumulate)
 (provide accumulate-n)
+(provide append)
 (require "cp1.rkt")
 
 ; Рациональные числа
